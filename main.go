@@ -30,31 +30,46 @@ func main() {
 		// ask user for their details
 		fmt.Println("Enter your first name: ")
 		fmt.Scan(&firstName)
+
 		fmt.Println("Enter your last name: ")
 		fmt.Scan(&lastName)
+
 		fmt.Println("Enter your email: ")
 		fmt.Scan(&email)
+
 		fmt.Println("How many tickets do you want to purchase: ")
 		fmt.Scan(&userTickets)
 
-		remainingTickets = remainingTickets - userTickets
-		bookings = append(bookings, firstName + " " + lastName )
+		isValdidName := len(firstName) >= 2 && len(lastName) >= 2
+		isValidEmail := strings.Contains(email, "@")
+		isValidTicketAmount := userTickets > 0 && userTickets <= remainingTickets
 
-		fmt.Printf("Thank you %v %v. You have booked %v tickets. Confirmation email sent to %v\n", firstName, lastName, userTickets, email)
-		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+		if userTickets <= remainingTickets {
+			remainingTickets = remainingTickets - userTickets
+			bookings = append(bookings, firstName + " " + lastName )
 
-		firstNames := []string{}
-		// _ is used in Go to identify unused variables, since in Go all named variables must be used.
-		for _, booking := range bookings {
-			var names = strings.Fields(booking)
-			firstNames = append(firstNames, names[0])
-		}
-		fmt.Printf("The first names of bookings are: %v\n", firstNames)
-		
-		if remainingTickets == 0 {
-			// end program
+			fmt.Printf("Thank you %v %v. You have booked %v tickets. Confirmation email sent to %v\n", firstName, lastName, userTickets, email)
+			fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+
+			firstNames := []string{}
+			// _ is used in Go to identify unused variables, since in Go all named variables must be used.
+			for _, booking := range bookings {
+				var names = strings.Fields(booking)
+				firstNames = append(firstNames, names[0])
+			}
+			fmt.Printf("The first names of bookings are: %v\n", firstNames)
 			
+			noTicketsRemaining := remainingTickets == 0
+			// or "if remainingTickets == 0 {}" would also work below.
+			if noTicketsRemaining {
+				// end program
+				fmt.Println("Our conference is booked out. Come back next year.")
+				break
+			}
+		} else {
+			fmt.Printf("You cannot book %v tickets. We only have %v tickets remaining. Try again.\n", userTickets, remainingTickets)
+			// continue and break can be used the same way they're used in Python. 'break' used to exit the loop. 'continue' used to reset/go to next iteration of loop.
 		}
-
+		
 	}
 }
