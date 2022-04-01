@@ -79,4 +79,19 @@ func main() {
 		}
 		
 	}
+
+	/*
+	city := "London"
+
+	switch city {
+		case "New York", "Chicago": // multiple cases.
+			// execute code
+		case "Singapore":
+			// execute diff code.
+		case "Dublin", "Cork": // can add multiple cases for situations where same code should be executed.
+			// execute diff code 2.
+		default:
+			// when none of the above cases are true, execute default block.
+	}
+	*/
 }
