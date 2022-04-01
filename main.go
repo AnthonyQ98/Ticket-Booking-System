@@ -44,7 +44,7 @@ func main() {
 		isValidEmail := strings.Contains(email, "@")
 		isValidTicketAmount := userTickets > 0 && userTickets <= remainingTickets
 
-		if userTickets <= remainingTickets {
+		if isValdidName && isValidEmail && isValidTicketAmount {
 			remainingTickets = remainingTickets - userTickets
 			bookings = append(bookings, firstName + " " + lastName )
 
@@ -63,12 +63,19 @@ func main() {
 			// or "if remainingTickets == 0 {}" would also work below.
 			if noTicketsRemaining {
 				// end program
-				fmt.Println("Our conference is booked out. Come back next year.")
+				fmt.Println("SORRY :(! Our conference is booked out. Come back next year.")
 				break
 			}
 		} else {
-			fmt.Printf("You cannot book %v tickets. We only have %v tickets remaining. Try again.\n", userTickets, remainingTickets)
-			// continue and break can be used the same way they're used in Python. 'break' used to exit the loop. 'continue' used to reset/go to next iteration of loop.
+			if !isValdidName {
+				fmt.Println("ERROR: Name is invalid. Please try again.")
+			}
+			if !isValidEmail {
+				fmt.Println("ERROR: Email is invalid. Please try again.")
+			}
+			if !isValidTicketAmount {
+				fmt.Println("ERROR: Ticket amount is invalid. please try again.")
+			}
 		}
 		
 	}
