@@ -2,14 +2,22 @@ package main
 
 import (
 	"fmt"
-	"strings"
-	"booking-system/helper"
+	"time"
 )
 
 var conferenceName = "Go Conference"
 const conferenceTickets uint = 50
 var remainingTickets uint = 50
-var bookings = []string{}
+var bookings = make([]UserData, 0)
+
+
+// mixed data type key value pairs = struct (structure)
+type UserData = struct {
+	firstName string
+	lastName string
+	email string
+	numberOfTickets uint
+}
 
 func main() {
 	// call function
@@ -18,10 +26,11 @@ func main() {
 	for {
 		firstName, lastName, email, userTickets := getUserInput()
 
-		isValidName, isValidEmail, isValidTicketAmount := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
+		isValidName, isValidEmail, isValidTicketAmount := validateUserInput(firstName, lastName, email, userTickets)
 
 		if isValidName && isValidEmail && isValidTicketAmount {
 			bookTicket(userTickets, firstName, lastName, email)
+			go sendTicket(userTickets, firstName, lastName, email)
 
 			// print first names in function
 			firstNames := getFirstNames()
@@ -76,8 +85,7 @@ func getFirstNames() []string {
 	firstNames := []string{}
 	// _ is used in Go to identify unused variables, since in Go all named variables must be used.
 	for _, booking := range bookings {
-		var names = strings.Fields(booking)
-		firstNames = append(firstNames, names[0])
+		firstNames = append(firstNames, booking.firstName)
 	}
 	//fmt.Printf("The first names of bookings are: %v\n", firstNames)
 	return firstNames
@@ -104,12 +112,28 @@ func getUserInput() (string, string, string, uint) {
 	return firstName, lastName, email, userTickets
 }
 
-func bookTicket(userTickets uint, firstName string, lastName string, email string) (uint, []string) {
+func bookTicket(userTickets uint, firstName string, lastName string, email string){
 	remainingTickets = remainingTickets - userTickets
-	bookings = append(bookings, firstName + " " + lastName )
+
+	// create a map for user
+	var userData = UserData {
+		firstName: firstName,
+		lastName: lastName,
+		email: email,
+		numberOfTickets: userTickets,
+	}
+
+	bookings = append(bookings, userData)
+	fmt.Printf("List of bookings is %v.\n", bookings)
 
 	fmt.Printf("Thank you %v %v. You have booked %v tickets. Confirmation email sent to %v\n", firstName, lastName, userTickets, email)
 	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
-	return remainingTickets, bookings
+}
 
+func sendTicket(userTickets uint, firstName string, lastName string, email string) {
+	time.Sleep(10 * time.Second)
+	var ticket = fmt.Sprintf("%v tickets for %v %v", userTickets, firstName, lastName)
+	fmt.Println("#################")
+	fmt.Printf("Sending ticket:\n %v \nto email address %v\n", ticket, email)
+	fmt.Println("#################")
 }
