@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"strings"
-	"booking-system/helper"
+	"strconv"
 )
 
 var conferenceName = "Go Conference"
 const conferenceTickets uint = 50
 var remainingTickets uint = 50
-var bookings = []string{}
+var bookings = make([]map[string]string, 0)
 
 func main() {
 	// call function
@@ -18,7 +17,7 @@ func main() {
 	for {
 		firstName, lastName, email, userTickets := getUserInput()
 
-		isValidName, isValidEmail, isValidTicketAmount := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
+		isValidName, isValidEmail, isValidTicketAmount := validateUserInput(firstName, lastName, email, userTickets)
 
 		if isValidName && isValidEmail && isValidTicketAmount {
 			bookTicket(userTickets, firstName, lastName, email)
@@ -76,8 +75,7 @@ func getFirstNames() []string {
 	firstNames := []string{}
 	// _ is used in Go to identify unused variables, since in Go all named variables must be used.
 	for _, booking := range bookings {
-		var names = strings.Fields(booking)
-		firstNames = append(firstNames, names[0])
+		firstNames = append(firstNames, booking["firstName"])
 	}
 	//fmt.Printf("The first names of bookings are: %v\n", firstNames)
 	return firstNames
@@ -104,12 +102,20 @@ func getUserInput() (string, string, string, uint) {
 	return firstName, lastName, email, userTickets
 }
 
-func bookTicket(userTickets uint, firstName string, lastName string, email string) (uint, []string) {
+func bookTicket(userTickets uint, firstName string, lastName string, email string){
 	remainingTickets = remainingTickets - userTickets
-	bookings = append(bookings, firstName + " " + lastName )
+
+	// create a map for user
+	var userData = make(map[string]string)
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["numberOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+
+
+	bookings = append(bookings, userData)
+	fmt.Printf("List of bookings is %v.\n", bookings)
 
 	fmt.Printf("Thank you %v %v. You have booked %v tickets. Confirmation email sent to %v\n", firstName, lastName, userTickets, email)
 	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
-	return remainingTickets, bookings
-
 }
